@@ -235,9 +235,13 @@ function EnvelopeIntro() {
                 ====================== */}
 
                 <div className="card-face card-front">
-                  <div className="card-photo">
+                  <img
+                    src={`${import.meta.env.BASE_URL}images/couple.jpg`}
+                    alt="عروس و داماد"
+                  />
+                  {/* <div className="card-photo">
                     <img src="/images/couple.PNG" alt="عروس و داماد" />
-                  </div>
+                  </div> */}
 
                   <div className="card-content">
                     <span>WITH LOVE</span>
