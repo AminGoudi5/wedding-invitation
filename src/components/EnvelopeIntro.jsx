@@ -266,7 +266,7 @@ const openMap = (type) => {
                 <div className="card-face card-front">
                   <div className="card-photo">
                     <img
-                      src={`${import.meta.env.BASE_URL}images/couple.PNG`}
+                      src={`${import.meta.env.BASE_URL}images/couple.JPEG`}
                       alt="عروس و داماد"
                     />
                   </div>
