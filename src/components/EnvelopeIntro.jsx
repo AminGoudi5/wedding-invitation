@@ -5,7 +5,7 @@ function EnvelopeIntro() {
   const [isFlipped, setIsFlipped] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
-
+  const [showMaps, setShowMaps] = useState(false);
   const audioRef = useRef(null);
 
   /*
@@ -15,7 +15,7 @@ function EnvelopeIntro() {
   */
 
   useEffect(() => {
-    const music = new Audio("/music/wedding.mp3");
+    const music = new Audio(`${import.meta.env.BASE_URL}music/wedding.mp3`);
 
     music.loop = true;
     music.volume = 0.45;
@@ -100,7 +100,7 @@ function EnvelopeIntro() {
         setIsMusicPlaying(false);
       });
   }, [isOpened]);
-
+  
   /*
     ========================================
     ENVELOPE FLAP
@@ -146,7 +146,36 @@ function EnvelopeIntro() {
   */
 
   const cardRotate = (1 - scrollProgress) * 1.5;
+const destination = "35.6589199,51.2129558";
 
+const openMap = (type) => {
+  const [lat, lng] = destination.split(",");
+
+  let url = "";
+
+  switch (type) {
+    case "google":
+      url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+      break;
+
+    case "waze":
+      url = `https://www.waze.com/ul?ll=${lat},${lng}&navigate=yes`;
+      break;
+
+    case "neshan":
+      url = `https://nshn.ir/?lat=${lat}&lng=${lng}`;
+      break;
+
+    case "balad":
+      url = `https://balad.ir/?latitude=${lat}&longitude=${lng}`;
+      break;
+
+    default:
+      return;
+  }
+
+  window.location.href = url;
+};
   return (
     <section className="envelope-section">
       <div className="envelope-stage">
@@ -235,13 +264,12 @@ function EnvelopeIntro() {
                 ====================== */}
 
                 <div className="card-face card-front">
-                  <img
-                    src={`${import.meta.env.BASE_URL}images/couple.jpg`}
-                    alt="عروس و داماد"
-                  />
-                  {/* <div className="card-photo">
-                    <img src="/images/couple.PNG" alt="عروس و داماد" />
-                  </div> */}
+                  <div className="card-photo">
+                    <img
+                      src={`${import.meta.env.BASE_URL}images/couple.PNG`}
+                      alt="عروس و داماد"
+                    />
+                  </div>
 
                   <div className="card-content">
                     <span>WITH LOVE</span>
@@ -273,18 +301,13 @@ function EnvelopeIntro() {
                   <div className="back-content">
                     <span className="back-small">به نام عشق</span>
 
-                    <h2>
-                      امید
-                      <small>&</small>
-                      حانیه
+                    <h2 className="couple-names">
+                      <span>امید</span>
+                      <span>حانیه</span>
                     </h2>
 
-                    <div className="back-divider" />
-
                     <p>
-                      در شبی که عشق،
-                      <br />
-                      بهانه‌ی کنار هم بودنمان شده،
+                      در شبی که عشق، بهانه‌ی کنار هم بودنمان شده،
                       <br />
                       خوشحالیم که شادی این آغاز را
                       <br />
@@ -295,7 +318,7 @@ function EnvelopeIntro() {
                       <div className="event-row">
                         <div className="event-item">
                           <strong>تاریخ</strong>
-                          <span>۱۴۰۵/۰۶/۲۰</span>
+                          <span>۱۴۰۵/۰۶/۱۴</span>
                         </div>
 
                         <div className="event-separator" />
@@ -308,19 +331,21 @@ function EnvelopeIntro() {
 
                       <div className="event-address">
                         <strong>آدرس</strong>
-                        <span>آدرس محل برگزاری مراسم</span>
+                        <span>
+                          تهران، شهرستان شهریار،جاده احمدآباد مستوفی، کوچه پاشا،
+                          عمارت مراکشی پدری
+                        </span>
                       </div>
                     </div>
 
-                    <a
+                    <button
+                      type="button"
                       className="location-button"
-                      href="https://www.google.com/maps/dir/?api=1&destination=آدرس%20محل%20برگزاری%20مراسم"
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      onClick={() => setShowMaps(true)}
                     >
                       <span>📍</span>
                       مشاهده مسیر
-                    </a>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -423,10 +448,75 @@ function EnvelopeIntro() {
           </div>
         )}
 
+                
+
+        {/* =========================
+              MAPS MODAL
+        ========================== */}
+
+        {showMaps && (
+          <div
+            className="maps-modal-overlay"
+            onClick={() => setShowMaps(false)}
+          >
+            <div
+              className="maps-modal"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                type="button"
+                className="maps-modal-close"
+                onClick={() => setShowMaps(false)}
+              >
+                ×
+              </button>
+
+              <div className="maps-modal-title">
+                انتخاب مسیریاب
+              </div>
+
+              <div className="maps-options">
+
+                <button
+                  type="button"
+                  onClick={() => openMap("google")}
+                >
+                  🗺️
+                  <span>Google Maps</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => openMap("waze")}
+                >
+                  🚗
+                  <span>Waze</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => openMap("neshan")}
+                >
+                  📍
+                  <span>نشان</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => openMap("balad")}
+                >
+                  🧭
+                  <span>بلد</span>
+                </button>
+
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* =========================
               SCROLL HINT
         ========================== */}
-
         {!isOpened && (
           <div
             className="scroll-hint"
