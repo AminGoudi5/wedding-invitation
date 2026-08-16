@@ -1520,22 +1520,17 @@ main {
 }
 
 /* ========================================
-   NAVIGATION MODAL
+   MAPS MODAL
 ======================================== */
 
-.navigation-overlay {
+.maps-modal-overlay {
     position: fixed;
-position: relative !important;
-    z-index: 999999 !important;
-    pointer-events: auto !important;
-    cursor: pointer !important;
-    -webkit-tap-highlight-color: transparent;
+
     inset: 0;
 
-    width: 100%;
-    height: 100%;
-
-    z-index: 99999;
+    width: 100vw;
+    height: 100vh;
+    height: 100svh;
 
     display: flex;
 
@@ -1544,24 +1539,27 @@ position: relative !important;
 
     padding: 20px;
 
-    background:
-        rgba(45, 38, 34, 0.38);
+    background: rgba(45, 38, 34, 0.42);
 
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
+
+    z-index: 999999;
+
+    animation: mapsOverlayIn 0.2s ease-out;
 }
 
 
 /* ========================================
-   MODAL
+   MAPS MODAL BOX
 ======================================== */
 
-.navigation-modal {
+.maps-modal {
     position: relative;
 
-    width: min(100%, 360px);
+    width: min(100%, 350px);
 
-    padding: 26px 20px 18px;
+    padding: 28px 20px 18px;
 
     background:
         linear-gradient(
@@ -1570,27 +1568,24 @@ position: relative !important;
             #f7eee8 100%
         );
 
-    border:
-        1px solid rgba(184, 135, 79, 0.22);
+    border: 1px solid rgba(184, 135, 79, 0.25);
 
     border-radius: 22px;
 
     box-shadow:
-        0 25px 70px rgba(50, 35, 25, 0.28);
+        0 25px 70px rgba(50, 35, 25, 0.30);
 
     direction: rtl;
 
-    animation:
-        navigationModalIn
-        0.25s ease-out;
+    animation: mapsModalIn 0.25s ease-out;
 }
 
 
 /* ========================================
-   CLOSE
+   CLOSE BUTTON
 ======================================== */
 
-.navigation-close {
+.maps-modal-close {
     position: absolute;
 
     top: 10px;
@@ -1599,12 +1594,13 @@ position: relative !important;
     width: 30px;
     height: 30px;
 
+    padding: 0;
+
     border: none;
 
     border-radius: 50%;
 
-    background:
-        rgba(184, 135, 79, 0.10);
+    background: rgba(184, 135, 79, 0.10);
 
     color: #8a6a4c;
 
@@ -1625,11 +1621,15 @@ position: relative !important;
 }
 
 
-.navigation-close:hover {
-    background:
-        rgba(184, 135, 79, 0.18);
+.maps-modal-close:hover {
+    background: rgba(184, 135, 79, 0.18);
 
     transform: rotate(90deg);
+}
+
+
+.maps-modal-close:active {
+    transform: scale(0.9);
 }
 
 
@@ -1637,24 +1637,12 @@ position: relative !important;
    TITLE
 ======================================== */
 
-.navigation-modal-title {
+.maps-modal-title {
     text-align: center;
 
     margin-bottom: 20px;
-}
 
-
-.navigation-modal-title > span {
-    display: block;
-
-    margin-bottom: 5px;
-
-    font-size: 25px;
-}
-
-
-.navigation-modal-title h3 {
-    margin: 0;
+    padding-top: 2px;
 
     font-family:
         "Amiri",
@@ -1670,26 +1658,22 @@ position: relative !important;
 }
 
 
-.navigation-modal-title p {
-    margin: 3px 0 0;
+.maps-modal-title::before {
+    content: "📍";
 
-    font-family:
-        "Amiri",
-        "Noto Naskh Arabic",
-        Tahoma,
-        sans-serif;
+    display: block;
 
-    font-size: 13px;
+    margin-bottom: 7px;
 
-    color: #9d7a5a;
+    font-size: 25px;
 }
 
 
 /* ========================================
-   OPTIONS
+   MAP OPTIONS
 ======================================== */
 
-.navigation-options {
+.maps-options {
     display: flex;
 
     flex-direction: column;
@@ -1698,10 +1682,25 @@ position: relative !important;
 }
 
 
-.navigation-option {
+/* ========================================
+   MAP OPTION BUTTON
+======================================== */
+
+.maps-options button {
     width: 100%;
 
     min-height: 58px;
+
+    padding: 8px 14px;
+
+    border: 1px solid rgba(184, 135, 79, 0.17);
+
+    border-radius: 14px;
+
+    background:
+        rgba(255, 255, 255, 0.65);
+
+    color: #403a36;
 
     display: flex;
 
@@ -1709,19 +1708,19 @@ position: relative !important;
 
     gap: 12px;
 
-    padding: 8px 12px;
+    direction: rtl;
 
-    border:
-        1px solid rgba(184, 135, 79, 0.16);
+    font-family:
+        "Vazirmatn",
+        Tahoma,
+        sans-serif;
 
-    border-radius: 14px;
+    font-size: 14px;
 
-    background:
-        rgba(255, 255, 255, 0.58);
+    cursor: pointer;
 
-    color: #403a36;
-
-    text-decoration: none;
+    box-shadow:
+        0 3px 10px rgba(80, 55, 35, 0.05);
 
     transition:
         transform 0.2s ease,
@@ -1730,177 +1729,78 @@ position: relative !important;
 }
 
 
-.navigation-option:hover {
-    transform: translateY(-1px);
+.maps-options button:hover {
+    transform: translateY(-2px);
 
-    background:
-        #ffffff;
+    background: #ffffff;
 
     box-shadow:
-        0 6px 18px rgba(80, 55, 35, 0.10);
+        0 7px 18px rgba(80, 55, 35, 0.10);
 }
 
 
-.navigation-option:active {
-    transform: scale(0.98);
-}
-
-
-/* ========================================
-   ICON
-======================================== */
-
-.navigation-icon {
-    width: 40px;
-    height: 40px;
-
-    flex-shrink: 0;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 11px;
-
-    background:
-        #eee9e3;
-
-    font-size: 21px;
+.maps-options button:active {
+    transform: scale(0.97);
 }
 
 
 /* ========================================
-   TEXT
+   MAP ICON
 ======================================== */
 
-.navigation-option-text {
+.maps-options button:first-child::before {
+    content: "";
+
+    display: none;
+}
+
+
+/* ========================================
+   MAP TEXT
+======================================== */
+
+.maps-options button span {
     flex: 1;
 
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: flex-start;
-
-    gap: 1px;
-}
-
-
-.navigation-option-text strong {
-    font-family:
-        "Amiri",
-        "Noto Naskh Arabic",
-        Tahoma,
-        sans-serif;
-
-    font-size: 15px;
-
-    font-weight: 700;
-
-    color: #403a36;
-}
-
-
-.navigation-option-text small {
-    font-family:
-        "Amiri",
-        "Noto Naskh Arabic",
-        Tahoma,
-        sans-serif;
-
-    font-size: 11px;
-
-    color: #9d7a5a;
-}
-
-
-/* ========================================
-   ARROW
-======================================== */
-
-.navigation-arrow {
-    font-size: 23px;
-
-    color: #b8874f;
-
-    line-height: 1;
-}
-
-
-/* ========================================
-   CANCEL
-======================================== */
-
-.navigation-cancel {
-    width: 100%;
-
-    height: 42px;
-
-    margin-top: 14px;
-
-    border: none;
-
-    border-radius: 12px;
-
-    background:
-        transparent;
-
-    color: #9d7a5a;
+    text-align: right;
 
     font-family:
-        "Amiri",
-        "Noto Naskh Arabic",
+        "Vazirmatn",
         Tahoma,
         sans-serif;
 
     font-size: 14px;
 
-    cursor: pointer;
+    font-weight: 500;
 
-    transition:
-        background 0.2s ease;
-}
-
-
-.navigation-cancel:hover {
-    background:
-        rgba(184, 135, 79, 0.08);
+    color: #403a36;
 }
 
 
 /* ========================================
-   ANIMATION
+   MODAL ANIMATION
 ======================================== */
-.maps-modal-overlay {
-    position: fixed;
-    inset: 0;
 
-    width: 100vw;
-    height: 100vh;
-    height: 100svh;
+@keyframes mapsOverlayIn {
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    from {
+        opacity: 0;
+    }
 
-    background: rgba(40, 32, 27, 0.42);
-
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-
-    z-index: 999999;
-
-    padding: 20px;
+    to {
+        opacity: 1;
+    }
 }
-@keyframes navigationModalIn {
+
+
+@keyframes mapsModalIn {
 
     from {
         opacity: 0;
 
         transform:
-            translateY(15px)
-            scale(0.96);
+            translateY(18px)
+            scale(0.94);
     }
 
     to {
