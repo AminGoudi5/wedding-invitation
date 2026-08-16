@@ -242,7 +242,11 @@ main {
 
     will-change: transform;
 
+    .wedding-card {
+    touch-action: none;
     user-select: none;
+    -webkit-user-select: none;
+}
 }
 
 
@@ -280,6 +284,36 @@ main {
    CARD INNER
 ======================================== */
 
+.wedding-card {
+    position: absolute;
+
+    left: 50%;
+
+    bottom: calc(-1 * var(--card-height));
+
+    width: 370px;
+    height: 510px;
+
+    border-radius: 5px;
+
+    overflow: visible;
+
+    z-index: 10;
+
+    transform-origin: center center;
+
+    box-shadow:
+        0 20px 45px rgba(55, 40, 35, 0.20);
+
+    will-change: transform;
+
+    user-select: none;
+    -webkit-user-select: none;
+
+    /* این دو خط مهم هستند */
+    pointer-events: auto;
+    touch-action: pan-y;
+}
 .wedding-card-inner {
     border-radius: 15px;
 
@@ -291,12 +325,25 @@ main {
     transform-style: preserve-3d;
 
     transition:
-        transform 0.9s cubic-bezier(0.4,
-            0,
-            0.2,
-            1);
+        transform 0.75s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /*
+      وقتی کارت باز است، خود کارت باید
+      Pointer Event را دریافت کند.
+    */
+    touch-action: none;
+
+    user-select: none;
+    -webkit-user-select: none;
+
+    -webkit-touch-callout: none;
+
+    cursor: grab;
 }
 
+.wedding-card-inner:active {
+    cursor: grabbing;
+}
 
 .wedding-card-inner.is-flipped {
     transform: rotateY(180deg);
@@ -1809,5 +1856,219 @@ main {
         transform:
             translateY(0)
             scale(1);
+    }
+}
+/* ========================================
+   SWIPE HINT
+======================================== */
+
+.swipe-hint {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 220px;
+
+    transform: translate(-50%, -50%);
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    padding: 18px 20px;
+
+    border-radius: 20px;
+
+    background: rgba(255, 250, 246, 0.88);
+
+    border: 1px solid rgba(184, 135, 79, 0.22);
+
+    box-shadow:
+        0 12px 35px rgba(70, 45, 30, 0.16);
+
+    backdrop-filter: blur(5px);
+
+    -webkit-backdrop-filter: blur(5px);
+
+    z-index: 100;
+
+    pointer-events: none;
+
+    animation:
+        swipeHintIn 0.5s ease forwards,
+        swipeHintOut 0.7s ease 4.3s forwards;
+}
+
+
+/* دست */
+
+.swipe-hand {
+    font-size: 38px;
+
+    line-height: 1;
+
+    margin-bottom: 2px;
+
+    animation:
+        handSwipe 1.6s ease-in-out infinite;
+}
+
+
+/* فلش ها */
+
+.swipe-arrows {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 55px;
+
+    margin: -2px 0 8px;
+
+    color: #b8874f;
+
+    font-family:
+        Georgia,
+        serif;
+
+    font-size: 25px;
+
+    line-height: 1;
+}
+
+
+.swipe-arrows span:first-child {
+    animation:
+        arrowLeft 1.4s ease-in-out infinite;
+}
+
+
+.swipe-arrows span:last-child {
+    animation:
+        arrowRight 1.4s ease-in-out infinite;
+}
+
+
+/* متن */
+
+.swipe-hint-text {
+    font-family:
+        "Amiri",
+        "Noto Naskh Arabic",
+        Tahoma,
+        sans-serif;
+
+    font-size: 15px;
+
+    line-height: 1.8;
+
+    font-weight: 700;
+
+    color: #5f554e;
+
+    direction: rtl;
+}
+
+
+/* ========================================
+   SWIPE HINT ANIMATIONS
+======================================== */
+
+@keyframes swipeHintIn {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translate(-50%, -50%)
+            scale(0.85);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translate(-50%, -50%)
+            scale(1);
+    }
+}
+
+
+@keyframes swipeHintOut {
+
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+
+        transform:
+            translate(-50%, -50%)
+            scale(0.96);
+    }
+}
+
+
+@keyframes handSwipe {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-22px);
+    }
+
+    50% {
+        transform: translateX(0);
+    }
+
+    75% {
+        transform: translateX(22px);
+    }
+}
+
+
+@keyframes arrowLeft {
+
+    0%,
+    100% {
+        opacity: 0.35;
+
+        transform: translateX(8px);
+    }
+
+    50% {
+        opacity: 1;
+
+        transform: translateX(-8px);
+    }
+}
+
+
+@keyframes arrowRight {
+
+    0%,
+    100% {
+        opacity: 0.35;
+
+        transform: translateX(-8px);
+    }
+
+    50% {
+        opacity: 1;
+
+        transform: translateX(8px);
     }
 }

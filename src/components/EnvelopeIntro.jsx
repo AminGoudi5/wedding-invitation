@@ -3,11 +3,13 @@ import { useEffect, useRef, useState } from "react";
 function EnvelopeIntro() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
-  const [touchStart, setTouchStart] = useState(null);
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const [showMaps, setShowMaps] = useState(false);
   const audioRef = useRef(null);
-
+  const touchStartRef = useRef(null);
+  const swipeTriggeredRef = useRef(false);
+  const [showSwipeHint, setShowSwipeHint] = useState(false);
+  const [hasSeenSwipeHint, setHasSeenSwipeHint] = useState(false);
   /*
     ========================================
     MUSIC + SCROLL
@@ -78,7 +80,17 @@ function EnvelopeIntro() {
   */
 
   const isOpened = scrollProgress >= 0.98;
+  useEffect(() => {
+    if (!isOpened || hasSeenSwipeHint) return;
 
+    setShowSwipeHint(true);
+
+    const timer = setTimeout(() => {
+      setShowSwipeHint(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [isOpened, hasSeenSwipeHint]);
   useEffect(() => {
     if (!isOpened) return;
 
@@ -100,7 +112,7 @@ function EnvelopeIntro() {
         setIsMusicPlaying(false);
       });
   }, [isOpened]);
-  
+
   /*
     ========================================
     ENVELOPE FLAP
@@ -146,36 +158,36 @@ function EnvelopeIntro() {
   */
 
   const cardRotate = (1 - scrollProgress) * 1.5;
-const destination = "35.6589199,51.2129558";
+  const destination = "35.6589199,51.2129558";
 
-const openMap = (type) => {
-  const [lat, lng] = destination.split(",");
+  const openMap = (type) => {
+    const [lat, lng] = destination.split(",");
 
-  let url = "";
+    let url = "";
 
-  switch (type) {
-    case "google":
-      url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
-      break;
+    switch (type) {
+      case "google":
+        url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+        break;
 
-    case "waze":
-      url = `https://www.waze.com/ul?ll=${lat},${lng}&navigate=yes`;
-      break;
+      case "waze":
+        url = `https://www.waze.com/ul?ll=${lat},${lng}&navigate=yes`;
+        break;
 
-    case "neshan":
-      url = `https://nshn.ir/?lat=${lat}&lng=${lng}`;
-      break;
+      case "neshan":
+        url = `https://nshn.ir/?lat=${lat}&lng=${lng}`;
+        break;
 
-    case "balad":
-      url = `https://balad.ir/?latitude=${lat}&longitude=${lng}`;
-      break;
+      case "balad":
+        url = `https://balad.ir/?latitude=${lat}&longitude=${lng}`;
+        break;
 
-    default:
-      return;
-  }
+      default:
+        return;
+    }
 
-  window.location.href = url;
-};
+    window.location.href = url;
+  };
   return (
     <section className="envelope-section">
       <div className="envelope-stage">
@@ -217,52 +229,83 @@ const openMap = (type) => {
                   isFlipped ? "is-flipped" : ""
                 }`}
                 style={{
-                  touchAction: "pan-y",
+                  touchAction: isOpened ? "none" : "pan-y",
+                  WebkitUserSelect: "none",
+                  userSelect: "none",
                 }}
                 onPointerDown={(e) => {
                   if (!isOpened) return;
 
-                  setTouchStart({
+                  touchStartRef.current = {
                     x: e.clientX,
                     y: e.clientY,
-                  });
+                  };
+
+                  swipeTriggeredRef.current = false;
+
+                  try {
+                    e.currentTarget.setPointerCapture(e.pointerId);
+                  } catch {}
+                }}
+                onPointerMove={(e) => {
+                  if (!isOpened) return;
+                  if (!touchStartRef.current) return;
+                  if (swipeTriggeredRef.current) return;
+
+                  const deltaX = e.clientX - touchStartRef.current.x;
+
+                  const deltaY = e.clientY - touchStartRef.current.y;
+
+                  const absX = Math.abs(deltaX);
+                  const absY = Math.abs(deltaY);
+
+                  /*
+                      ========================================
+                      SWIPE LEFT / RIGHT
+                      ========================================
+                    */
+
+                  if (absX > 50 && absX > absY) {
+                    swipeTriggeredRef.current = true;
+
+                    setIsFlipped((prev) => !prev);
+                    setShowSwipeHint(false);
+                    setHasSeenSwipeHint(true);
+                    return;
+                  }
+
+                  /*
+      ========================================
+      SWIPE UP
+      ========================================
+    */
+
+                  if (absY > 50 && absY > absX && deltaY < 0) {
+                    swipeTriggeredRef.current = true;
+                    setShowSwipeHint(false);
+                    setHasSeenSwipeHint(true);
+                    setIsFlipped((prev) => !prev);
+
+                    return;
+                  }
                 }}
                 onPointerUp={(e) => {
-                  if (!isOpened || !touchStart) {
-                    return;
-                  }
+                  try {
+                    e.currentTarget.releasePointerCapture(e.pointerId);
+                  } catch {}
 
-                  const deltaX = e.clientX - touchStart.x;
-
-                  const deltaY = e.clientY - touchStart.y;
-
-                  setTouchStart(null);
-
-                  /*
-                    اگر حرکت بیشتر عمودی بود،
-                    Swipe حساب نشود
-                  */
-
-                  if (Math.abs(deltaY) > Math.abs(deltaX)) {
-                    return;
-                  }
-
-                  /*
-                    حداقل 60px حرکت افقی
-                  */
-
-                  if (Math.abs(deltaX) >= 60) {
-                    setIsFlipped((previous) => !previous);
-                  }
+                  touchStartRef.current = null;
+                  swipeTriggeredRef.current = false;
                 }}
                 onPointerCancel={() => {
-                  setTouchStart(null);
+                  touchStartRef.current = null;
+                  swipeTriggeredRef.current = false;
                 }}
               >
                 {/* =====================
                         FRONT
                 ====================== */}
-
+                
                 <div className="card-face card-front">
                   <div className="card-photo">
                     <img
@@ -294,8 +337,8 @@ const openMap = (type) => {
 
                 <div className="card-face card-back">
                   {/* =========================
-      WATERMARK
-  ========================== */}
+                              WATERMARK
+                      ========================= */}
                   <div className="card-watermark" />
 
                   <div className="back-content">
@@ -348,6 +391,22 @@ const openMap = (type) => {
                     </button>
                   </div>
                 </div>
+                {showSwipeHint && (
+                  <div className="swipe-hint">
+                    <div className="swipe-hand">☝</div>
+
+                    <div className="swipe-arrows">
+                      <span>←</span>
+                      <span>→</span>
+                    </div>
+
+                    <div className="swipe-hint-text">
+                      برای چرخش کارت
+                      <br />
+                      به چپ یا راست بکشید
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -448,8 +507,6 @@ const openMap = (type) => {
           </div>
         )}
 
-                
-
         {/* =========================
               MAPS MODAL
         ========================== */}
@@ -459,10 +516,7 @@ const openMap = (type) => {
             className="maps-modal-overlay"
             onClick={() => setShowMaps(false)}
           >
-            <div
-              className="maps-modal"
-              onClick={(e) => e.stopPropagation()}
-            >
+            <div className="maps-modal" onClick={(e) => e.stopPropagation()}>
               <button
                 type="button"
                 className="maps-modal-close"
@@ -471,44 +525,28 @@ const openMap = (type) => {
                 ×
               </button>
 
-              <div className="maps-modal-title">
-                انتخاب مسیریاب
-              </div>
+              <div className="maps-modal-title">انتخاب مسیریاب</div>
 
               <div className="maps-options">
-
-                <button
-                  type="button"
-                  onClick={() => openMap("google")}
-                >
+                <button type="button" onClick={() => openMap("google")}>
                   🗺️
                   <span>Google Maps</span>
                 </button>
 
-                <button
-                  type="button"
-                  onClick={() => openMap("waze")}
-                >
+                <button type="button" onClick={() => openMap("waze")}>
                   🚗
                   <span>Waze</span>
                 </button>
 
-                <button
-                  type="button"
-                  onClick={() => openMap("neshan")}
-                >
+                <button type="button" onClick={() => openMap("neshan")}>
                   📍
                   <span>نشان</span>
                 </button>
 
-                <button
-                  type="button"
-                  onClick={() => openMap("balad")}
-                >
+                <button type="button" onClick={() => openMap("balad")}>
                   🧭
                   <span>بلد</span>
                 </button>
-
               </div>
             </div>
           </div>
