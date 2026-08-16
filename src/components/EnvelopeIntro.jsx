@@ -528,7 +528,7 @@ const openMap = (type) => {
 
             <small>صفحه را به بالا بکشید</small>
 
-            <div className="scroll-arrow">↓</div>
+            <div className="scroll-arrow">↑</div>
           </div>
         )}
       </div>
