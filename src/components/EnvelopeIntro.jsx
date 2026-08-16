@@ -87,7 +87,7 @@ function EnvelopeIntro() {
 
     const timer = setTimeout(() => {
       setShowSwipeHint(false);
-    }, 2000);
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, [isOpened, hasSeenSwipeHint]);
@@ -253,7 +253,6 @@ function EnvelopeIntro() {
                   if (swipeTriggeredRef.current) return;
 
                   const deltaX = e.clientX - touchStartRef.current.x;
-
                   const deltaY = e.clientY - touchStartRef.current.y;
 
                   const absX = Math.abs(deltaX);
@@ -305,7 +304,7 @@ function EnvelopeIntro() {
                 {/* =====================
                         FRONT
                 ====================== */}
-                
+
                 <div className="card-face card-front">
                   <div className="card-photo">
                     <img
