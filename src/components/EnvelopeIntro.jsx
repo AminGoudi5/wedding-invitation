@@ -367,7 +367,7 @@ function EnvelopeIntro() {
 
                         <div className="event-item">
                           <strong>ساعت</strong>
-                          <span>۱۹:۰۰</span>
+                          <span>۱۸:۰۰</span>
                         </div>
                       </div>
 
