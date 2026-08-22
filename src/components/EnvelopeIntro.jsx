@@ -10,6 +10,7 @@ function EnvelopeIntro() {
   const swipeTriggeredRef = useRef(false);
   const [showSwipeHint, setShowSwipeHint] = useState(false);
   const [hasSeenSwipeHint, setHasSeenSwipeHint] = useState(false);
+  const [showPartyCam, setShowPartyCam] = useState(false);
   /*
     ========================================
     MUSIC + SCROLL
@@ -235,7 +236,9 @@ function EnvelopeIntro() {
                 }}
                 onPointerDown={(e) => {
                   if (!isOpened) return;
-
+                  if (e.target.closest("button")) {
+                    return;
+                  }
                   touchStartRef.current = {
                     x: e.clientX,
                     y: e.clientY,
@@ -380,14 +383,29 @@ function EnvelopeIntro() {
                       </div>
                     </div>
 
-                    <button
-                      type="button"
-                      className="location-button"
-                      onClick={() => setShowMaps(true)}
-                    >
-                      <span>📍</span>
-                      مشاهده مسیر
-                    </button>
+                    <div className="card-action-buttons">
+                      <button
+                        type="button"
+                        className="location-button"
+                        onPointerDown={(e) => e.stopPropagation()}
+                        onPointerUp={(e) => e.stopPropagation()}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowMaps(true);
+                        }}
+                      >
+                        <span>📍</span>
+                        مشاهده مسیر
+                      </button>
+                      <button
+                        type="button"
+                        className="partycam-button"
+                        onClick={() => setShowPartyCam(true)}
+                      >
+                        <span>📸</span>
+                        یه خاطره بسازیم؟
+                      </button>
+                    </div>
                   </div>
                 </div>
                 {showSwipeHint && (
@@ -409,7 +427,74 @@ function EnvelopeIntro() {
               </div>
             </div>
           </div>
+          {showPartyCam && (
+            <div
+              className="partycam-modal-overlay"
+              onClick={() => setShowPartyCam(false)}
+            >
+              <div
+                className="partycam-modal"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button
+                  type="button"
+                  className="partycam-modal-close"
+                  onClick={() => setShowPartyCam(false)}
+                >
+                  ×
+                </button>
 
+                <div className="partycam-modal-icon">📸</div>
+
+                <div className="partycam-modal-title">یه خاطره بسازیم؟</div>
+
+                <div className="partycam-modal-text">
+                  <p>
+                    امشب فقط قرار نیست مهمان ما باشید؛
+                    <br />
+                    <strong>شما هم بخشی از خاطرات این شب هستید. ❤️</strong>
+                  </p>
+
+                  <p>
+                    با <strong>PartyCam</strong> لحظه‌های این شب رو از نگاه
+                    خودتون ثبت کنید؛ عکس بگیرید، ویدیو بسازید و خاطره‌ای برامون
+                    به یادگار بذارید.
+                  </p>
+
+                  <div className="partycam-how">
+                    <strong>چطور؟ ✨</strong>
+
+                    <p>
+                      خیلی ساده‌ست!
+                      <br />
+                      QR Code مربوط به PartyCam روی میز جشن قرار دارن.
+                    </p>
+
+                    <p>
+                      کافیه QR Code رو با دوربین گوشی‌تون اسکن کنید تا وارد
+                      PartyCam بشید. 📱
+                      هم میتونید از  داخل برنامه عکاسی کنید و هم میتونید 
+                      عکس و فیلم هایی که گرفتید رو به برنامه اضافه کنید.
+                      <br />
+                      تا ماهم داشته باشیمشون.
+                    </p>
+                  </div>
+
+                  <div className="partycam-final-text">
+                    شاید یکی از عکس‌هایی که امشب می‌گیرید،
+                    <br />
+                    سال‌ها بعد تبدیل به یکی از
+                    <br />
+                    دوست‌داشتنی‌ترین خاطراتمان شود. 🤍
+                  </div>
+                </div>
+
+                <div className="partycam-qr-hint">
+                  📱 منتظر عکس های زیباتون هستیم!
+                </div>
+              </div>
+            </div>
+          )}
           {/* =========================
                 ENVELOPE FRONT
           ========================== */}
